@@ -75,19 +75,12 @@ iriscli --home iris/n0/iriscli keys delete n0
 
 # seed from iris/n0/iriscli/key_seed.json -> gaia/n1
 gaiacli --home gaia/n0/gaiacli keys add n1 --recover
-# you can open key file by this command
-open ~/ibc-testnets/iris/n0/iriscli/key_seed.json
 
 # seed from gaia/n0/gaiacli/key_seed.json -> iris/n0
 iriscli --home iris/n0/iriscli keys add n0 --recover
-# you can open key file by this command
-open ~/ibc-testnets/iris/n0/iriscli/key_seed.json
 
 # seed from iris/n0/iriscli/key_seed.json -> iris/n1
 iriscli --home iris/n0/iriscli keys add n1 --recover
-# you can open key file by this command
-open ~/ibc-testnets/iris/n0/iriscli/key_seed.json
-
 
 # Ensure keys match
 gaiacli --home gaia/n0/gaiacli keys list | jq '.[].address'
@@ -114,13 +107,15 @@ Create IBC clients on each chain using the following commands. Note that we are 
 
 ```bash
 # client for chain iris on chain gaia
-gaiacli --home gaia/n0/gaiacli \
+gaiacli \
+  --home gaia/n0/gaiacli \
   tx ibc client create client-to-iris \
   $(iriscli --home iris/n0/iriscli q ibc client consensus-state) \
   --from n0 -y -o text
 
 # client for chain gaia on chain iris
-iriscli --home iris/n0/iriscli \
+iriscli \
+  --home iris/n0/iriscli \
   tx ibc client create client-to-gaia \
   $(gaiacli --home gaia/n0/gaiacli q ibc client consensus-state) \
   --from n1 -y -o text
@@ -203,7 +198,8 @@ gaiacli --home gaia/n0/gaiacli q ibcmocksend next chan-to-iris
 Now you are ready to send an `ibc-mock` packet down the channel (`chan-to-iris`) from chain `gaia` to chain `iris`! To do so run the following command:
 
 ```bash
-gaiacli --home gaia/n0/gaiacli \
+gaiacli \
+  --home gaia/n0/gaiacli \
   tx ibcmocksend sequence chan-to-iris \
   $(gaiacli --home gaia/n0/gaiacli q ibcmocksend next chan-to-iris) \
   --from n0 \
