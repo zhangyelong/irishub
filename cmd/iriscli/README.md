@@ -8,7 +8,7 @@
 
 This branch uses non-canonical branch of cosmos-sdk. Before building, run `go mod vendor` on the root directory to retrive the dependencies. To build:
 
-### install iris
+### Install `iris`
 
 ```bash
 git clone https://github.com/irisnet/irishub.git
@@ -20,7 +20,7 @@ iris version
 iriscli version
 ```
 
-### install gaia
+### Install `gaia`
 
 ```bash
 git clone https://github.com/cosmos/gaia.git
@@ -192,7 +192,7 @@ gaiacli --home gaia/n0/gaiacli q ibcmocksend sequence chan-to-iris
 
 # Returns the next expected sequence number, for use in scripting
 gaiacli --home gaia/n0/gaiacli q ibcmocksend next chan-to-iris
-# incorrect: should be 1, but return 2
+# BUG: should return "1" when the sequence is "0", but actually return "2"
 ```
 
 Now you are ready to send an `ibc-mock` packet down the channel (`chan-to-iris`) from chain `gaia` to chain `iris`! To do so run the following command:
@@ -204,6 +204,8 @@ gaiacli \
   $(gaiacli --home gaia/n0/gaiacli q ibcmocksend next chan-to-iris) \
   --from n0 \
   -o text
+# BUG: Use "1" instead of "$(gaiacli --home gaia/n0/gaiacli q ibcmocksend next chan-to-iris)"
+# when "gaiacli --home gaia/n0/gaiacli q ibcmocksend sequence chan-to-iris" returns 0
 ```
 
 ### Receive Packet
