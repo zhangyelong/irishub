@@ -10,9 +10,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/pkg/errors"
-	"github.com/spf13/viper"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/lcd"
@@ -31,7 +28,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
-
+	"github.com/irisnet/irishub/app"
+	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 	tmcfg "github.com/tendermint/tendermint/config"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
@@ -46,8 +45,6 @@ import (
 	tmrpc "github.com/tendermint/tendermint/rpc/lib/server"
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
-
-	"github.com/irisnet/irishub/app"
 )
 
 // TODO: Make InitializeTestLCD safe to call in multiple tests at the same time

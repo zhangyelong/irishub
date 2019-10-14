@@ -10,7 +10,7 @@ Note we often encode bytes as hex in the logs, but as base64 in the JSON.
 
 The following give the same result:
 
-```
+```bash
 irisebug pubkey TZTQnfqOsi89SeoXVnIw+tnFJnr4X8qVC0U8AsEmFk4=
 irisebug pubkey 4D94D09DFA8EB22F3D49EA17567230FAD9C5267AF85FCA950B453C02C126164E
 ```
@@ -19,7 +19,7 @@ irisebug pubkey 4D94D09DFA8EB22F3D49EA17567230FAD9C5267AF85FCA950B453C02C126164E
 
 Pass in a hex/base64 tx and get back the full JSON
 
-```
+```bash
 irisebug tx <hex or base64 transaction>
 ```
 

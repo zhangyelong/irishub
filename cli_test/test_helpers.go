@@ -11,13 +11,6 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
-
-	"github.com/stretchr/testify/require"
-
-	tmtypes "github.com/tendermint/tendermint/types"
-
-	"github.com/irisnet/irishub/app"
-
 	clientkeys "github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys"
@@ -30,6 +23,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	"github.com/irisnet/irishub/app"
+	"github.com/stretchr/testify/require"
+	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 const (

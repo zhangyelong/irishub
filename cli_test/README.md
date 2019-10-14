@@ -8,7 +8,7 @@ go test -mod=readonly -p 4 `go list ./cli_test/...` -tags=cli_test
 
 > NOTE: While the full suite runs in parallel, some of the tests can take up to a minute to complete
 
-### Test Structure
+## Test Structure
 
 This integration suite [uses a thin wrapper](https://godoc.org/github.com/cosmos/cosmos-sdk/tests) over the [`os/exec`](https://golang.org/pkg/os/exec/) package. This allows the integration test to run against built binaries (both `iris` and `iriscli` are used) while being written in golang. This allows tests to take advantage of the various golang code we have for operations like marshal/unmarshal, crypto, etc...
 
@@ -18,16 +18,16 @@ Tests generally follow this structure:
 
 ```go
 func TestMyNewCommand(t *testing.T) {
-  t.Parallel()
-	f := InitFixtures(t)
+    t.Parallel()
+    f := InitFixtures(t)
 
-	// start iris server
-	proc := f.GDStart()
-	defer proc.Stop(false)
+    // start iris server
+    proc := f.GDStart()
+    defer proc.Stop(false)
 
-  // Your test code goes here...
+    // Your test code goes here...
 
-	f.Cleanup()
+    f.Cleanup()
 }
 ```
 
@@ -41,7 +41,7 @@ This boilerplate above:
 - Starts `iris` and stops it once the test exits
 - Cleans up test state on a successful run
 
-### Notes when adding/running tests
+## Notes when adding/running tests
 
 - Because the tests run against a built binary, you should make sure you build every time the code changes and you want to test again, otherwise you will be testing against an older version. If you are adding new tests this can easily lead to confusing test results.
 - The [`test_helpers.go`](./test_helpers.go) file is organized according to the format of `iriscli` and `iris` commands. There are comments with section headers describing the different areas. Helper functions to call CLI functionality are generally named after the command (e.g. `iriscli query staking validator` would be `QueryStakingValidator`). Try to keep functions grouped by their position in the command tree.

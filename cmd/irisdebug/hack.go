@@ -7,20 +7,15 @@ import (
 	"os"
 	"path"
 
-	"github.com/cosmos/cosmos-sdk/store"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
-
+	"github.com/cosmos/cosmos-sdk/store"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	iris "github.com/irisnet/irishub/app"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/ed25519"
-
 	"github.com/tendermint/tendermint/libs/log"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	iris "github.com/irisnet/irishub/app"
 )
 
 func runHackCmd(cmd *cobra.Command, args []string) error {

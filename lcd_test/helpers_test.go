@@ -30,7 +30,6 @@ import (
 	slashingrest "github.com/cosmos/cosmos-sdk/x/slashing/client/rest"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingrest "github.com/cosmos/cosmos-sdk/x/staking/client/rest"
-
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
