@@ -1,9 +1,5 @@
 # IBC instruction
 
-// temporal document
-
-// connect irishub and gaia
-
 ## Dependencies
 
 This branch uses non-canonical branch of cosmos-sdk. Before building, run `go mod vendor` on the root directory to retrive the dependencies. To build:
@@ -42,7 +38,7 @@ gaiad testnet -o gaia --v 1 --chain-id gaia --node-dir-prefix n
 iris testnet -o iris --v 1 --chain-id iris --node-dir-prefix n
 ```
 
-### Set `gaiacli` Configuation
+### Set `gaiad` `gaiacli` and `iris` `iriscli` Configuation
 
 Fix the configuration files to allow both chains/nodes to run on the same machine
 
@@ -192,10 +188,9 @@ gaiacli --home gaia/n0/gaiacli q ibcmocksend sequence chan-to-iris
 
 # Returns the next expected sequence number, for use in scripting
 gaiacli --home gaia/n0/gaiacli q ibcmocksend next chan-to-iris
-# BUG: should return "1" when the sequence is "0", but actually return "2"
 ```
 
-Now you are ready to send an `ibc-mock` packet down the channel (`chan-to-iris`) from chain `gaia` to chain `iris`! To do so run the following command:
+Now you are ready to send an `ibc-mock` packet down the channel (`chan-to-iris`) from chain `gaia` to chain `iris`! To do so run the following commands to send a packet down the channel:
 
 ```bash
 gaiacli \
@@ -204,13 +199,11 @@ gaiacli \
   $(gaiacli --home gaia/n0/gaiacli q ibcmocksend next chan-to-iris) \
   --from n0 \
   -o text
-# BUG: Use "1" instead of "$(gaiacli --home gaia/n0/gaiacli q ibcmocksend next chan-to-iris)"
-# when "gaiacli --home gaia/n0/gaiacli q ibcmocksend sequence chan-to-iris" returns 0
 ```
 
 ### Receive Packet
 
-Once packets are sent, reciept must be confirmed on the destination chain. To receive the packets you just sent, run the following command:
+Once packets are sent, receipt must be confirmed on the destination chain. To `pull` the packets from `gaia` on `iris`, run the following command:
 
 ```bash
 gaiacli \
@@ -219,12 +212,19 @@ gaiacli \
   --node1 tcp://localhost:26657 \
   --node2 tcp://localhost:26557 \
   --chain-id2 iris \
-  --from1 n0 \
-  --from2 n1 \
-  -o text
+  --from n1
 ```
 
-Once the packets have been sent, check the To see the updated sequence run the following command:
+This command sends two transactions. You should see the reciept of the packet:
+
+```bash
+iris <- update-client  [OK] txid(7D4B4DE7A6B8E1045CA7BEB16E21DD0491BED000E5FB0D05BBB7960AABE5CC78) client(client-to-gaia)
+iris <- empty-packet   [OK] txid(6E90B9CE19394D7D41CF55E4ADCC94D6169B476B45527F9C47346080C85A289F) packets(1)
+```
+
+> Note: This command pushes all the packets out of the channel with one command. Try pushing a **couple of packets** from `gaia` to `iris` then fulshing them at once. You should see output like:
+
+Once the packets have been sent, you can check the updated sequence by running:
 
 ```bash
 iriscli --home iris/n0/iriscli q ibcmockrecv sequence chan-to-gaia --trust-node
