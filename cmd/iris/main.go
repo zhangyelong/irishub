@@ -13,6 +13,7 @@ import (
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/irisnet/irishub/app"
+	iconfig "github.com/irisnet/irishub/cmd/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -30,9 +31,10 @@ func main() {
 	cdc := app.MakeCodec()
 
 	config := sdk.GetConfig()
-	config.SetBech32PrefixForAccount(sdk.Bech32PrefixAccAddr, sdk.Bech32PrefixAccPub)
-	config.SetBech32PrefixForValidator(sdk.Bech32PrefixValAddr, sdk.Bech32PrefixValPub)
-	config.SetBech32PrefixForConsensusNode(sdk.Bech32PrefixConsAddr, sdk.Bech32PrefixConsPub)
+	irisConfig := iconfig.GetConfig()
+	config.SetBech32PrefixForAccount(irisConfig.GetBech32AccountAddrPrefix(), irisConfig.GetBech32AccountPubPrefix())
+	config.SetBech32PrefixForValidator(irisConfig.GetBech32ValidatorAddrPrefix(), irisConfig.GetBech32ValidatorPubPrefix())
+	config.SetBech32PrefixForConsensusNode(irisConfig.GetBech32ConsensusAddrPrefix(), irisConfig.GetBech32ConsensusPubPrefix())
 	config.Seal()
 
 	ctx := server.NewDefaultContext()
