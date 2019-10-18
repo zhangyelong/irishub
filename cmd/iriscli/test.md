@@ -84,7 +84,7 @@ iriscli --home ibc-a/n0/iriscli q ibc client consensus-state client-to-b
 iriscli --home ibc-b/n0/iriscli q ibc client consensus-state client-to-a
 ```
 
-ppdate client
+update client
 
 ```bash
 # update chain-a
