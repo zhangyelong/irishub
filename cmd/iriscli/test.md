@@ -178,18 +178,20 @@ iriscli --home ibc-a/n0/iriscli q ibc client path -o json >ibc-b/n0/prefix.json
 # export header.json from chain-a
 iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
 # export proof_init.json from chain-a with hight in header.json
-iriscli --home ibc-a/n0/iriscli q ibc connection proof conn-to-b $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) -o json >ibc-b/n0/conn/proof_init.json
+iriscli --home ibc-a/n0/iriscli q ibc connection proof conn-to-b $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) -o json >ibc-b/n0/conn_proof_init.json
 # view proof_init.json
-jq -r '' ibc-b/n0/conn/proof_init.json
+jq -r '' ibc-b/n0/conn_proof_init.json
 # update client on chain-b
 iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json --from n1 -y -o text --broadcast-mode=block
+# query client consense state
+iriscli --home ibc-b/n0/iriscli q ibc client consensus-state client-to-a | jq
 # open-try
 iriscli --home ibc-b/n0/iriscli tx ibc connection open-try \
   conn-to-a client-to-a \
   conn-to-b client-to-b \
   ibc-b/n0/prefix.json \
   1.0.0 \
-  ibc-b/n0/conn/proof_init.json \
+  ibc-b/n0/conn_proof_init.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
   --from n1 -y -o text \
   --broadcast-mode=block
@@ -201,17 +203,19 @@ iriscli --home ibc-b/n0/iriscli tx ibc connection open-try \
 # export header.json from chain-b
 iriscli --home ibc-b/n0/iriscli q ibc client header -o json >ibc-a/n0/header.json
 # export proof_try.json from chain-b with hight in header.json
-iriscli --home ibc-b/n0/iriscli q ibc connection proof conn-to-a $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) -o json >ibc-a/n0/conn/proof_try.json
+iriscli --home ibc-b/n0/iriscli q ibc connection proof conn-to-a $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) -o json >ibc-a/n0/conn_proof_try.json
 # view proof_try.json
-jq -r '' ibc-a/n0/conn/proof_try.json
+jq -r '' ibc-a/n0/conn_proof_try.json
 # update client on chain-a
 iriscli --home ibc-a/n0/iriscli tx ibc client update client-to-b ibc-a/n0/header.json --from n0 -y -o text --broadcast-mode=block
+# query client consense state
+iriscli --home ibc-a/n0/iriscli q ibc client consensus-state client-to-b | jq
 # open-ack
 iriscli --home ibc-a/n0/iriscli tx ibc connection open-ack \
   conn-to-b \
-  ibc-a/n0/conn/proof_try.json \
-  1.0.0 \
+  ibc-a/n0/conn_proof_try.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) \
+  1.0.0 \
   --from n0 -y -o text \
   --broadcast-mode=block
 ```
@@ -222,15 +226,15 @@ iriscli --home ibc-a/n0/iriscli tx ibc connection open-ack \
 # export header.json from chain-a
 iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
 # export proof_ack.json from chain-a with hight in header.json
-iriscli --home ibc-a/n0/iriscli q ibc connection proof conn-to-b $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) -o json >ibc-b/n0/conn/proof_ack.json
+iriscli --home ibc-a/n0/iriscli q ibc connection proof conn-to-b $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) -o json >ibc-b/n0/conn_proof_ack.json
 # view proof_ack.json
-jq -r '' ibc-b/n0/conn/proof_ack.json
+jq -r '' ibc-b/n0/conn_proof_ack.json
 # update client on chain-b
 iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json --from n1 -y -o text --broadcast-mode=block
-# open-try
+# open-confirm
 iriscli --home ibc-b/n0/iriscli tx ibc connection open-confirm \
   conn-to-a \
-  ibc-b/n0/conn/proof_ack.json \
+  ibc-b/n0/conn_proof_ack.json \
   --from n1 -y -o text \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
   --broadcast-mode=block
