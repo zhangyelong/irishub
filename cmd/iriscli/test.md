@@ -120,29 +120,34 @@ iriscli --home ibc-a/n0/iriscli tx ibc connection open-init \
   --from n0 -y -o text
 
 # TODO: update chain-b first
+iriscli --home ibc-a/n0/iriscli q ibc client path | jq
+iriscli --home ibc-a/n0/iriscli q ibc client path -o json >ibc-b/n0/prefix.json
 iriscli --home ibc-b/n0/iriscli tx ibc connection open-try \
   conn-to-a client-to-a \
   conn-to-b client-to-b \
-  ibc-a/n0/prefix.json 1.0.0 \
-  [path/to/proof_init.json]
+  ibc-b/n0/prefix.json 1.0.0 \
+  [path/to/proof_init.json] \
+  --from n1 -y -o text
 
 # TODO: update chain-a first
 iriscli --home ibc-a/n0/iriscli tx ibc connection open-ack \
-  conn-to-b [path/to/proof_try.json] 1.0.0
+  conn-to-b [path/to/proof_try.json] 1.0.0 \
+  --from n0 -y -o text
 
 # TODO: update chain-b first
 iriscli --home ibc-b/n0/iriscli tx ibc connection open-confirm \
-  conn-to-a [path/to/proof_ack.json]
+  conn-to-a [path/to/proof_ack.json] \
+  --from n1 -y -o text
 ```
 
 **Query connection**
 
 ```bash
-iriscli --home ibc-a/n0/iriscli q ibc connection end conn-to-b
-iriscli --home ibc-b/n0/iriscli q ibc connection end conn-to-a
+iriscli --home ibc-a/n0/iriscli q ibc connection end conn-to-b | jq
+iriscli --home ibc-b/n0/iriscli q ibc connection end conn-to-a | jq
 
-iriscli --home ibc-a/n0/iriscli q ibc connection client client-to-b
-iriscli --home ibc-b/n0/iriscli q ibc connection client client-to-a
+iriscli --home ibc-a/n0/iriscli q ibc connection client client-to-b | jq
+iriscli --home ibc-b/n0/iriscli q ibc connection client client-to-a | jq
 ```
 
 **Create channel**
@@ -178,8 +183,8 @@ iriscli --home ibc-b/n0/iriscli tx ibc channel open-confirm \
 **Query channel**
 
 ```bash
-iriscli --home ibc-a/n0/iriscli query ibc channel end port-to-b chann-to-b
-iriscli --home ibc-b/n0/iriscli query ibc channel end port-to-a chann-to-a
+iriscli --home ibc-a/n0/iriscli query ibc channel end port-to-b chann-to-b | jq
+iriscli --home ibc-b/n0/iriscli query ibc channel end port-to-a chann-to-a | jq
 ```
 
 **Bank transfer from chain-a to chain-b**
