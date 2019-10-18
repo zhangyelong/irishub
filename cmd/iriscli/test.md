@@ -4,7 +4,7 @@ use local `cosmos-sdk` for test
 
 ```bash
 # go.mod
-replace github.com/cosmos/cosmos-sdk => /path-to-your-local/cosmos-sdk-iris
+replace github.com/cosmos/cosmos-sdk => /path-to-your-local/cosmos-sdk
 ```
 
 environment setup
