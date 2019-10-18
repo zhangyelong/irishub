@@ -1,4 +1,4 @@
-# Test
+# IBC Test
 
 **Use local `cosmos-sdk` for test**
 
@@ -77,120 +77,288 @@ iris --home ibc-b/n0/iris start
 
 **Create client**
 
-```bash
-iriscli --home ibc-b/n0/iriscli q ibc client consensus-state-init -o json | jq
-iriscli --home ibc-b/n0/iriscli q ibc client consensus-state-init -o json >ibc-a/n0/consensus_state.json
-iriscli --home ibc-a/n0/iriscli tx ibc client create client-to-b ibc-a/n0/consensus_state.json --from n0 -y -o text
+create client on chain-a
 
-iriscli --home ibc-a/n0/iriscli q ibc client consensus-state-init -o json | jq
-iriscli --home ibc-a/n0/iriscli q ibc client consensus-state-init -o json >ibc-b/n0/consensus_state.json
-iriscli --home ibc-b/n0/iriscli tx ibc client create client-to-a ibc-b/n0/consensus_state.json --from n1 -y -o text
+```bash
+# view consensus-state of chain-b
+iriscli --home ibc-b/n0/iriscli q ibc client self-consensus-state -o json | jq
+# export consensus_state.json from chain-b
+iriscli --home ibc-b/n0/iriscli q ibc client self-consensus-state -o json >ibc-a/n0/consensus_state.json
+# create client on chain-a
+iriscli --home ibc-a/n0/iriscli tx ibc client create client-to-b ibc-a/n0/consensus_state.json --from n0 -y -o text --broadcast-mode=block
+```
+
+create client on chain-b
+
+```bash
+# view consensus-state of chain-a
+iriscli --home ibc-a/n0/iriscli q ibc client self-consensus-state -o json | jq
+# export consensus_state.json from chain-a
+iriscli --home ibc-a/n0/iriscli q ibc client self-consensus-state -o json >ibc-b/n0/consensus_state.json
+# create client on chain-b
+iriscli --home ibc-b/n0/iriscli tx ibc client create client-to-a ibc-b/n0/consensus_state.json --from n1 -y -o text --broadcast-mode=block
 ```
 
 **Query client**
 
-```bash
-iriscli --home ibc-a/n0/iriscli q ibc client state client-to-b | jq
-iriscli --home ibc-b/n0/iriscli q ibc client state client-to-a | jq
+query client state
 
+```bash
+# query client state on chain-a
+iriscli --home ibc-a/n0/iriscli q ibc client state client-to-b | jq
+# query client state on chain-b
+iriscli --home ibc-b/n0/iriscli q ibc client state client-to-a | jq
+```
+
+query client consensus-state
+
+```bash
+# query client consensus-state on chain-a
 iriscli --home ibc-a/n0/iriscli q ibc client consensus-state client-to-b | jq
+# query client consensus-state on chain-b
 iriscli --home ibc-b/n0/iriscli q ibc client consensus-state client-to-a | jq
+```
+
+query client path
+
+```bash
+# query client path of chain-a
+iriscli --home ibc-a/n0/iriscli q ibc client path | jq
+# query client path of chain-b
+iriscli --home ibc-b/n0/iriscli q ibc client path | jq
 ```
 
 **Update client**
 
-```bash
-# update chain-a
-iriscli --home ibc-b/n0/iriscli q ibc client header -o json | jq
-iriscli --home ibc-b/n0/iriscli q ibc client header -o json >ibc-a/n0/header.json
-iriscli --home ibc-a/n0/iriscli tx ibc client update client-to-b ibc-a/n0/header.json --from n0 -y -o text
+update chain-a
 
-# update chain-a
+```bash
+# query header of chain-b
+iriscli --home ibc-b/n0/iriscli q ibc client header -o json | jq
+# export header of chain-b
+iriscli --home ibc-b/n0/iriscli q ibc client header -o json >ibc-a/n0/header.json
+# update client on chain-a
+iriscli --home ibc-a/n0/iriscli tx ibc client update client-to-b ibc-a/n0/header.json --from n0 -y -o text --broadcast-mode=block
+```
+
+update chain-b
+
+```bash
+# query header of chain-a
 iriscli --home ibc-a/n0/iriscli q ibc client header -o json | jq
+# export header of chain-a
 iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
-iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json --from n1 -y -o text
+# update client on chain-b
+iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json --from n1 -y -o text --broadcast-mode=block
 ```
 
 **Create connection**
 
+`open-init` on chain-a
+
 ```bash
-iriscli --home ibc-b/n0/iriscli q ibc client path | jq
+# export prefix.json
 iriscli --home ibc-b/n0/iriscli q ibc client path -o json >ibc-a/n0/prefix.json
+# view prefix.json
+jq -r '' ibc-a/n0/prefix.json
+# open-init
 iriscli --home ibc-a/n0/iriscli tx ibc connection open-init \
   conn-to-b client-to-b \
   conn-to-a client-to-a \
   ibc-a/n0/prefix.json \
-  --from n0 -y -o text
+  --from n0 -y -o text \
+  --broadcast-mode=block
+```
 
-# TODO: update chain-b first
-iriscli --home ibc-a/n0/iriscli q ibc client path | jq
+`open-try` on chain-b
+
+```bash
+# export prefix.json
 iriscli --home ibc-a/n0/iriscli q ibc client path -o json >ibc-b/n0/prefix.json
+# export header.json from chain-a
+iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
+# export proof_init.json from chain-a with hight in header.json
+iriscli --home ibc-a/n0/iriscli q ibc connection proof conn-to-b $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) -o json >ibc-b/n0/conn/proof_init.json
+# view proof_init.json
+jq -r '' ibc-b/n0/conn/proof_init.json
+# update client on chain-b
+iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json --from n1 -y -o text --broadcast-mode=block
+# open-try
 iriscli --home ibc-b/n0/iriscli tx ibc connection open-try \
   conn-to-a client-to-a \
   conn-to-b client-to-b \
-  ibc-b/n0/prefix.json 1.0.0 \
-  [path/to/proof_init.json] \
-  --from n1 -y -o text
+  ibc-b/n0/prefix.json \
+  1.0.0 \
+  ibc-b/n0/conn/proof_init.json \
+  $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
+  --from n1 -y -o text \
+  --broadcast-mode=block
+```
 
-# TODO: update chain-a first
+`open-ack` on chain-a
+
+```bash
+# export header.json from chain-b
+iriscli --home ibc-b/n0/iriscli q ibc client header -o json >ibc-a/n0/header.json
+# export proof_try.json from chain-b with hight in header.json
+iriscli --home ibc-b/n0/iriscli q ibc connection proof conn-to-a $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) -o json >ibc-a/n0/conn/proof_try.json
+# view proof_try.json
+jq -r '' ibc-a/n0/conn/proof_try.json
+# update client on chain-a
+iriscli --home ibc-a/n0/iriscli tx ibc client update client-to-b ibc-a/n0/header.json --from n0 -y -o text --broadcast-mode=block
+# open-ack
 iriscli --home ibc-a/n0/iriscli tx ibc connection open-ack \
-  conn-to-b [path/to/proof_try.json] 1.0.0 \
-  --from n0 -y -o text
+  conn-to-b \
+  ibc-a/n0/conn/proof_try.json \
+  1.0.0 \
+  $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) \
+  --from n0 -y -o text \
+  --broadcast-mode=block
+```
 
-# TODO: update chain-b first
+`open-confirm` on chain-b
+
+```bash
+# export header.json from chain-a
+iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
+# export proof_ack.json from chain-a with hight in header.json
+iriscli --home ibc-a/n0/iriscli q ibc connection proof conn-to-b $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) -o json >ibc-b/n0/conn/proof_ack.json
+# view proof_ack.json
+jq -r '' ibc-b/n0/conn/proof_ack.json
+# update client on chain-b
+iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json --from n1 -y -o text --broadcast-mode=block
+# open-try
 iriscli --home ibc-b/n0/iriscli tx ibc connection open-confirm \
-  conn-to-a [path/to/proof_ack.json] \
-  --from n1 -y -o text
+  conn-to-a \
+  ibc-b/n0/conn/proof_ack.json \
+  --from n1 -y -o text \
+  $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
+  --broadcast-mode=block
 ```
 
 **Query connection**
 
-```bash
-iriscli --home ibc-a/n0/iriscli q ibc connection end conn-to-b | jq
-iriscli --home ibc-b/n0/iriscli q ibc connection end conn-to-a | jq
+query connection
 
+```bash
+# query connection on chain-a
+iriscli --home ibc-a/n0/iriscli q ibc connection end conn-to-b | jq
+# query connection on chain-b
+iriscli --home ibc-b/n0/iriscli q ibc connection end conn-to-a | jq
+```
+
+query connection proof
+
+```bash
+# query connection proof with height in header.json on chain-a
+iriscli --home ibc-a/n0/iriscli q ibc connection proof conn-to-b $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) | jq
+# query connection proof with height in header.json on chain-b
+iriscli --home ibc-b/n0/iriscli q ibc connection proof conn-to-a $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) | jq
+```
+
+query connections of a client
+
+```bash
+# query connections of a client on chain-a
 iriscli --home ibc-a/n0/iriscli q ibc connection client client-to-b | jq
+# query connections of a client on chain-b
 iriscli --home ibc-b/n0/iriscli q ibc connection client client-to-a | jq
 ```
 
 **Create channel**
 
+`open-init` on chain-a
+
 ```bash
+# open-init
 iriscli --home ibc-a/n0/iriscli tx ibc channel open-init \
   port-to-b chann-to-b \
   port-to-a chann-to-a \
   conn-to-a \
-  --from n0 -y -o text
+  --from n0 -y -o text \
+  --broadcast-mode=block
+```
 
-# TODO: update chain-b first
+`open-try` on chain-b
+
+```bash
+# export header.json from chain-a
+iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
+# export proof_init.json from chain-a with hight in header.json
+iriscli --home ibc-a/n0/iriscli q ibc channel proof port-to-b chann-to-b $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) -o json >ibc-b/n0/chann/proof_init.json
+# view proof_init.json
+jq -r '' ibc-b/n0/chann/proof_init.json
+# update client on chain-b
+iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json --from n1 -y -o text --broadcast-mode=block
+# open-try
 iriscli --home ibc-b/n0/iriscli tx ibc channel open-try \
   port-to-b chann-to-a \
   port-to-a chann-to-b \
   conn-to-b \
-  [/path/to/proof-init.json] \
-  [proof-height] \
-  --from n1 -y -o text
+  ibc-b/n0/chann/proof_init.json \
+  $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
+  --from n1 -y -o text \
+  --broadcast-mode=block
+```
 
-# TODO: update chain-a first
+`open-ack` on chain-a
+
+```bash
+# export header.json from chain-b
+iriscli --home ibc-b/n0/iriscli q ibc client header -o json >ibc-a/n0/header.json
+# export proof_try.json from chain-b with hight in header.json
+iriscli --home ibc-b/n0/iriscli q ibc channel proof port-to-a chann-to-a $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) -o json >ibc-a/n0/chann/proof_try.json
+# view proof_try.json
+jq -r '' ibc-a/n0/chann/proof_try.json
+# update client on chain-a
+iriscli --home ibc-a/n0/iriscli tx ibc client update client-to-b ibc-a/n0/header.json --from n0 -y -o text --broadcast-mode=block
+# open-ack
 iriscli --home ibc-a/n0/iriscli tx ibc channel open-ack \
   port-to-b chann-to-b \
-  [/path/to/proof-try.json] \
-  [proof-height] \
-  --from n0 -y -o text
+  ibc-a/n0/chann/proof_try.json \
+  $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) \
+  --from n0 -y -o text \
+  --broadcast-mode=block
+```
 
-# TODO: update chain-b first
+`open-confirm` on chain-b
+
+```bash
+# export header.json from chain-a
+iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
+# export proof_ack.json from chain-a with hight in header.json
+iriscli --home ibc-a/n0/iriscli q ibc channel proof port-to-b chann-to-b $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) -o json >ibc-b/n0/chann/proof_ack.json
+# view proof_ack.json
+jq -r '' ibc-b/n0/chann/proof_ack.json
+# update client on chain-b
+iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json --from n1 -y -o text --broadcast-mode=block
+# open-confirm
 iriscli --home ibc-b/n0/iriscli tx ibc channel open-confirm \
   port-to-a chann-to-a \
-  [/path/to/proof-ack.json] \
-  [proof-height] \
-  --from n1 -y -o text
+  ibc-b/n0/chann/proof_ack.json \
+  $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
+  --from n1 -y -o text \
+  --broadcast-mode=block
 ```
 
 **Query channel**
 
+query channel
+
 ```bash
+# query channel on chain-a
 iriscli --home ibc-a/n0/iriscli query ibc channel end port-to-b chann-to-b | jq
+# query channel on chain-b
 iriscli --home ibc-b/n0/iriscli query ibc channel end port-to-a chann-to-a | jq
+```
+
+query channel proof
+
+```bash
+# query channel proof with height in header.json on chain-a
+iriscli --home ibc-a/n0/iriscli q ibc channel proof port-to-b chann-to-b $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) | jq
+# query channel proof with height in header.json on chain-b
+iriscli --home ibc-b/n0/iriscli q ibc channel proof port-to-a chann-to-a $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) | jq
 ```
 
 **Bank transfer from chain-a to chain-b**
