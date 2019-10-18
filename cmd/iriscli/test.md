@@ -85,7 +85,11 @@ iriscli --home ibc-a/n0/iriscli tx ibc client create client-to-b ibc-a/n0/consen
 iriscli --home ibc-a/n0/iriscli q ibc client consensus-state-init -o json | jq
 iriscli --home ibc-a/n0/iriscli q ibc client consensus-state-init -o json >ibc-b/n0/consensus_state.json
 iriscli --home ibc-b/n0/iriscli tx ibc client create client-to-a ibc-b/n0/consensus_state.json --from n1 -y -o text
+```
 
+**Query client**
+
+```bash
 iriscli --home ibc-a/n0/iriscli q ibc client state client-to-b | jq
 iriscli --home ibc-b/n0/iriscli q ibc client state client-to-a | jq
 
@@ -110,7 +114,6 @@ iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header
 **Create connection**
 
 ```bash
-# TODO: update chain-a first
 iriscli --home ibc-b/n0/iriscli q ibc client path | jq
 iriscli --home ibc-b/n0/iriscli q ibc client path -o json >ibc-a/n0/prefix.json
 iriscli --home ibc-a/n0/iriscli tx ibc connection open-init \
@@ -153,11 +156,11 @@ iriscli --home ibc-b/n0/iriscli q ibc connection client client-to-a | jq
 **Create channel**
 
 ```bash
-# TODO: update chain-a first
 iriscli --home ibc-a/n0/iriscli tx ibc channel open-init \
   port-to-b chann-to-b \
   port-to-a chann-to-a \
-  conn-to-a
+  conn-to-a \
+  --from n0 -y -o text
 
 # TODO: update chain-b first
 iriscli --home ibc-b/n0/iriscli tx ibc channel open-try \
@@ -165,19 +168,22 @@ iriscli --home ibc-b/n0/iriscli tx ibc channel open-try \
   port-to-a chann-to-b \
   conn-to-b \
   [/path/to/proof-init.json] \
-  [proof-height]
+  [proof-height] \
+  --from n1 -y -o text
 
 # TODO: update chain-a first
 iriscli --home ibc-a/n0/iriscli tx ibc channel open-ack \
   port-to-b chann-to-b \
   [/path/to/proof-try.json] \
-  [proof-height]
+  [proof-height] \
+  --from n0 -y -o text
 
 # TODO: update chain-b first
 iriscli --home ibc-b/n0/iriscli tx ibc channel open-confirm \
   port-to-a chann-to-a \
   [/path/to/proof-ack.json] \
-  [proof-height]
+  [proof-height] \
+  --from n1 -y -o text
 ```
 
 **Query channel**
@@ -203,7 +209,7 @@ iriscli --home ibc-a/n0/iriscli tx ibc bank transfer [...]
 iriscli --home ibc-b/n0/iriscli tx ibc bank transfer [...] [...]
 ```
 
-**Deliver packet `(not implemented)`**
+**Receive packet `(not implemented)`**
 
 ```bash
 iriscli --home ibc-a/n0/iriscli tx ibc channel send-packet [...]
