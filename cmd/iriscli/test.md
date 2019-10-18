@@ -111,7 +111,6 @@ iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header
 
 ```bash
 # TODO: update chain-a first
-
 iriscli --home ibc-b/n0/iriscli q ibc client path | jq
 iriscli --home ibc-b/n0/iriscli q ibc client path -o json >ibc-a/n0/prefix.json
 iriscli --home ibc-a/n0/iriscli tx ibc connection open-init \
@@ -151,27 +150,27 @@ iriscli --home ibc-b/n0/iriscli q ibc connection client client-to-a
 ```bash
 # TODO: update chain-a first
 iriscli --home ibc-a/n0/iriscli tx ibc channel open-init \
-  [port-id] chann-to-b \
-  [counterparty-port-id] chann-to-a \
-  [connection-hops]
+  port-to-b chann-to-b \
+  port-to-a chann-to-a \
+  conn-to-a
 
 # TODO: update chain-b first
 iriscli --home ibc-b/n0/iriscli tx ibc channel open-try \
-  [port-id] chann-to-a \
-  [counterparty-port-id] chann-to-b \
-  [connection-hops] \
+  port-to-b chann-to-a \
+  port-to-a chann-to-b \
+  conn-to-b \
   [/path/to/proof-init.json] \
   [proof-height]
 
 # TODO: update chain-a first
 iriscli --home ibc-a/n0/iriscli tx ibc channel open-ack \
-  [port-id] chann-to-b \
+  port-to-b chann-to-b \
   [/path/to/proof-try.json] \
   [proof-height]
 
 # TODO: update chain-b first
 iriscli --home ibc-b/n0/iriscli tx ibc channel open-confirm \
-  [port-id] chann-to-a \
+  port-to-a chann-to-a \
   [/path/to/proof-ack.json] \
   [proof-height]
 ```
@@ -179,8 +178,8 @@ iriscli --home ibc-b/n0/iriscli tx ibc channel open-confirm \
 **Query channel**
 
 ```bash
-iriscli --home ibc-a/n0/iriscli query ibc channel end [port-id] chann-to-b
-iriscli --home ibc-b/n0/iriscli query ibc channel end [port-id] chann-to-a
+iriscli --home ibc-a/n0/iriscli query ibc channel end port-to-b chann-to-b
+iriscli --home ibc-b/n0/iriscli query ibc channel end port-to-a chann-to-a
 ```
 
 **Bank transfer from chain-a to chain-b**
