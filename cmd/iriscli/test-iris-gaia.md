@@ -407,8 +407,6 @@ jq -r '.events[1].attributes[2].value' ibc-iris/n0/result.json >ibc-gaia/n0/pack
 
 **Bank receive**
 
-> use "tx ibc channel send-packet" instead when router-module completed in the future
-
 ```bash
 # export header.json from chain-iris
 iriscli --home ibc-iris/n0/iriscli q ibc client header -o json >ibc-gaia/n0/header.json
@@ -425,6 +423,53 @@ gaiacli --home ibc-gaia/n0/gaiacli tx ibc client update client-to-iris ibc-gaia/
 gaiacli --home ibc-gaia/n0/gaiacli tx ibcmockbank recv-packet \
   ibc-gaia/n0/packet.json ibc-gaia/n0/proof.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \
+  --from n0 -y -o text \
+  --broadcast-mode=block
+```
+
+**Query Account**
+
+```bash
+# view sender account
+iriscli --home ibc-iris/n0/iriscli q account -o text \
+  $(iriscli --home ibc-iris/n0/iriscli keys show n0 | jq -r '.address')
+# view receiver account
+gaiacli --home ibc-gaia/n0/gaiacli q account -o text \
+  $(gaiacli --home ibc-gaia/n0/gaiacli keys show n0 | jq -r '.address')
+```
+
+**Bank transfer from chain-gaia to chain-iris**
+
+```bash
+# export transfer result to result.json
+gaiacli --home ibc-gaia/n0/gaiacli tx ibcmockbank transfer \
+  --src-port port-to-bank --src-channel chann-to-iris \
+  --denom uatom --amount 1 \
+  --receiver $(iriscli --home ibc-iris/n0/iriscli keys show n0 | jq -r '.address') \
+  --source true \
+  --from n0 -y -o json > ibc-gaia/n0/result.json
+# export packet.json
+jq -r '.events[1].attributes[2].value' ibc-gaia/n0/result.json >ibc-iris/n0/packet.json
+```
+
+**Bank receive**
+
+```bash
+# export header.json from chain-gaia
+gaiacli --home ibc-gaia/n0/gaiacli q ibc client header -o json >ibc-iris/n0/header.json
+# export proof.json from chain-iris with hight in header.json
+gaiacli --home ibc-gaia/n0/gaiacli q ibc channel proof port-to-bank chann-to-iris \
+  $(jq -r '.value.SignedHeader.header.height' ibc-iris/n0/header.json) \
+  -o json >ibc-iris/n0/proof.json
+# view proof.json
+jq -r '' ibc-iris/n0/proof.json
+# update client on chain-gaia
+iriscli --home ibc-iris/n0/iriscli tx ibc client update client-to-gaia ibc-iris/n0/header.json \
+  --from n0 -y -o text --broadcast-mode=block
+# receive packet
+iriscli --home ibc-iris/n0/iriscli tx ibcmockbank recv-packet \
+  ibc-iris/n0/packet.json ibc-iris/n0/proof.json \
+  $(jq -r '.value.SignedHeader.header.height' ibc-iris/n0/header.json) \
   --from n0 -y -o text \
   --broadcast-mode=block
 ```
