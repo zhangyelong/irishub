@@ -401,13 +401,6 @@ iriscli --home ibc-iris/n0/iriscli tx ibcmockbank transfer \
   --receiver $(gaiacli --home ibc-gaia/n0/gaiacli keys show n0 | jq -r '.address') \
   --source true \
   --from n0 -y -o json > ibc-iris/n0/result.json
-
-iriscli --home ibc-iris/n0/iriscli tx ibcmockbank transfer \
-  --src-port port-to-bank --src-channel chann-to-gaia \
-  --denom uiris --amount 1 \
-  --receiver $(gaiacli --home ibc-gaia/n0/gaiacli keys show n0 | jq -r '.address') \
-  --source true \
-  --from n0 -y --broadcast-mode=block
 # export packet.json
 jq -r '.events[1].attributes[2].value' ibc-iris/n0/result.json >ibc-gaia/n0/packet.json
 ```
