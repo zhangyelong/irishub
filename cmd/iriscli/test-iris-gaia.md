@@ -410,7 +410,7 @@ jq -r '.events[1].attributes[2].value' ibc-iris/n0/result.json >ibc-gaia/n0/pack
 ```bash
 # export header.json from chain-iris
 iriscli --home ibc-iris/n0/iriscli q ibc client header -o json >ibc-gaia/n0/header.json
-# export proof.json from chain-gaia with hight in header.json
+# export proof.json from chain-iris with hight in header.json
 iriscli --home ibc-iris/n0/iriscli q ibc channel proof port-to-bank chann-to-gaia \
   $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \
   -o json >ibc-gaia/n0/proof.json
@@ -430,10 +430,10 @@ gaiacli --home ibc-gaia/n0/gaiacli tx ibcmockbank recv-packet \
 **Query Account**
 
 ```bash
-# view sender account
+# view sender account on chain-iris
 iriscli --home ibc-iris/n0/iriscli q account -o text \
   $(iriscli --home ibc-iris/n0/iriscli keys show n0 | jq -r '.address')
-# view receiver account
+# view receiver account on chain-gaia
 gaiacli --home ibc-gaia/n0/gaiacli q account -o text \
   $(gaiacli --home ibc-gaia/n0/gaiacli keys show n0 | jq -r '.address')
 ```
@@ -457,13 +457,13 @@ jq -r '.events[1].attributes[2].value' ibc-gaia/n0/result.json >ibc-iris/n0/pack
 ```bash
 # export header.json from chain-gaia
 gaiacli --home ibc-gaia/n0/gaiacli q ibc client header -o json >ibc-iris/n0/header.json
-# export proof.json from chain-iris with hight in header.json
+# export proof.json from chain-gaia with hight in header.json
 gaiacli --home ibc-gaia/n0/gaiacli q ibc channel proof port-to-bank chann-to-iris \
   $(jq -r '.value.SignedHeader.header.height' ibc-iris/n0/header.json) \
   -o json >ibc-iris/n0/proof.json
 # view proof.json
 jq -r '' ibc-iris/n0/proof.json
-# update client on chain-gaia
+# update client on chain-iris
 iriscli --home ibc-iris/n0/iriscli tx ibc client update client-to-gaia ibc-iris/n0/header.json \
   --from n0 -y -o text --broadcast-mode=block
 # receive packet
@@ -477,10 +477,10 @@ iriscli --home ibc-iris/n0/iriscli tx ibcmockbank recv-packet \
 **Query Account**
 
 ```bash
-# view sender account
-iriscli --home ibc-iris/n0/iriscli q account -o text \
-  $(iriscli --home ibc-iris/n0/iriscli keys show n0 | jq -r '.address')
-# view receiver account
+# view sender account on chain-gaia
 gaiacli --home ibc-gaia/n0/gaiacli q account -o text \
   $(gaiacli --home ibc-gaia/n0/gaiacli keys show n0 | jq -r '.address')
+# view receiver account on chain-iris
+iriscli --home ibc-iris/n0/iriscli q account -o text \
+  $(iriscli --home ibc-iris/n0/iriscli keys show n0 | jq -r '.address')
 ```
