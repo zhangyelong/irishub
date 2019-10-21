@@ -400,13 +400,16 @@ iriscli --home ibc-b/n0/iriscli q ibc channel proof port-to-a chann-to-a \
 **Bank transfer from chain-a to chain-b**
 
 ```bash
-# generate packet to chain-a
+# export transfer result to result.json
 iriscli tx ibcmockbank transfer \
   --src-port port-to-b --src-channel chann-to-b \
   --denom n0token --amount 1 \
   --receiver $(iriscli --home ibc-a/n0/iriscli keys show n1 | jq -r '.address') \
-  --source true --from n0 --home ibc-a/n0/iriscli -y -o text \
-  --broadcast-mode=block
+  --source true \
+  --from n0 --home ibc-a/n0/iriscli -y -o json > ibc-b/n0/result.json
+
+# export packet.json
+jq -r '.events[1].attributes[2].value' ibc-b/n0/result.json >ibc-b/n0/packet.json
 ```
 
 **Bank receive**
@@ -428,15 +431,15 @@ iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header
 
 ```bash
 iriscli --home ibc-b/n0/iriscli tx ibcmockbank recv-packet \
-  packet.json ibc-a/n0/proof.json \
+  ibc-b/n0/packet.json ibc-a/n0/proof.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
   --from n1 -y -o text \
   --broadcast-mode=block
 ```
 
-Query Account 
+**Query Account**
+
 ```bash
 iriscli --home ibc-a/n0/iriscli q account -o text $(iriscli --home ibc-a/n0/iriscli keys show n0 | jq -r '.address')
 iriscli --home ibc-b/n0/iriscli q account -o text $(iriscli --home ibc-a/n0/iriscli keys show n1 | jq -r '.address')
 ```
- 
