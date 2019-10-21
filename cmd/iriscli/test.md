@@ -33,32 +33,10 @@ iriscli config --home ibc-a/n0/iriscli/ node http://localhost:26657
 iriscli config --home ibc-b/n0/iriscli/ node http://localhost:26557
 ```
 
-**Set Keys**
+**View Keys**
 
 ```bash
-# copy mnemonic
-jq -r '.secret' ibc-a/n0/iriscli/key_seed.json | pbcopy
-jq -r '.secret' ibc-b/n0/iriscli/key_seed.json | pbcopy
-
-# Remove the key n0 on iris
-iriscli --home ibc-b/n0/iriscli keys delete n0
-
-# copy mnemonic
-jq -r '.secret' ibc-b/n0/iriscli/key_seed.json | pbcopy
-# seed from ibc-b/n0/iriscli/key_seed.json -> ibc-a/n1
-iriscli --home ibc-a/n0/iriscli keys add n1 --recover
-
-# copy mnemonic
-jq -r '.secret' ibc-a/n0/iriscli/key_seed.json | pbcopy
-# seed from ibc-a/n0/iriscli/key_seed.json -> ibc-b/n0
-iriscli --home ibc-b/n0/iriscli keys add n0 --recover
-
-# copy mnemonic
-jq -r '.secret' ibc-b/n0/iriscli/key_seed.json | pbcopy
-# seed from ibc-b/n0/iriscli/key_seed.json -> ibc-b/n1
-iriscli --home ibc-b/n0/iriscli keys add n1 --recover
-
-# Ensure keys match
+# view keys
 iriscli --home ibc-a/n0/iriscli keys list | jq '.[].address'
 iriscli --home ibc-b/n0/iriscli keys list | jq '.[].address'
 ```
@@ -98,7 +76,7 @@ iriscli --home ibc-a/n0/iriscli q ibc client self-consensus-state -o json | jq
 iriscli --home ibc-a/n0/iriscli q ibc client self-consensus-state -o json >ibc-b/n0/consensus_state.json
 # create client on chain-b
 iriscli --home ibc-b/n0/iriscli tx ibc client create client-to-a ibc-b/n0/consensus_state.json \
-  --from n1 -y -o text --broadcast-mode=block
+  --from n0 -y -o text --broadcast-mode=block
 ```
 
 **Query client**
@@ -153,7 +131,7 @@ iriscli --home ibc-a/n0/iriscli q ibc client header -o json | jq
 iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
 # update client on chain-b
 iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json \
-  --from n1 -y -o text --broadcast-mode=block
+  --from n0 -y -o text --broadcast-mode=block
 ```
 
 **Create connection**
@@ -189,7 +167,7 @@ iriscli --home ibc-a/n0/iriscli q ibc connection proof conn-to-b \
 jq -r '' ibc-b/n0/conn_proof_init.json
 # update client on chain-b
 iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json \
-  --from n1 -y -o text --broadcast-mode=block
+  --from n0 -y -o text --broadcast-mode=block
 # query client consense state
 iriscli --home ibc-b/n0/iriscli q ibc client consensus-state client-to-a | jq
 # open-try
@@ -200,7 +178,7 @@ iriscli --home ibc-b/n0/iriscli tx ibc connection open-try \
   1.0.0 \
   ibc-b/n0/conn_proof_init.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
-  --from n1 -y -o text \
+  --from n0 -y -o text \
   --broadcast-mode=block
 ```
 
@@ -243,12 +221,12 @@ iriscli --home ibc-a/n0/iriscli q ibc connection proof conn-to-b \
 jq -r '' ibc-b/n0/conn_proof_ack.json
 # update client on chain-b
 iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json \
-  --from n1 -y -o text --broadcast-mode=block
+  --from n0 -y -o text --broadcast-mode=block
 # open-confirm
 iriscli --home ibc-b/n0/iriscli tx ibc connection open-confirm \
   conn-to-a \
   ibc-b/n0/conn_proof_ack.json \
-  --from n1 -y -o text \
+  --from n0 -y -o text \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
   --broadcast-mode=block
 ```
@@ -311,7 +289,7 @@ iriscli --home ibc-a/n0/iriscli q ibc channel proof port-to-b chann-to-b \
 jq -r '' ibc-b/n0/chann_proof_init.json
 # update client on chain-b
 iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json \
-  --from n1 -y -o text --broadcast-mode=block
+  --from n0 -y -o text --broadcast-mode=block
 # query client consense state
 iriscli --home ibc-b/n0/iriscli q ibc client consensus-state client-to-a | jq
 # open-try
@@ -321,7 +299,7 @@ iriscli --home ibc-b/n0/iriscli tx ibc channel open-try \
   conn-to-a \
   ibc-b/n0/chann_proof_init.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
-  --from n1 -y -o text \
+  --from n0 -y -o text \
   --broadcast-mode=block
 ```
 
@@ -363,7 +341,7 @@ iriscli --home ibc-a/n0/iriscli q ibc channel proof port-to-b chann-to-b \
 jq -r '' ibc-b/n0/chann_proof_ack.json
 # update client on chain-b
 iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json \
-  --from n1 -y -o text --broadcast-mode=block
+  --from n0 -y -o text --broadcast-mode=block
 # query client consense state
 iriscli --home ibc-b/n0/iriscli q ibc client consensus-state client-to-a | jq
 # open-confirm
@@ -371,7 +349,7 @@ iriscli --home ibc-b/n0/iriscli tx ibc channel open-confirm \
   port-to-a chann-to-a \
   ibc-b/n0/chann_proof_ack.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
-  --from n1 -y -o text \
+  --from n0 -y -o text \
   --broadcast-mode=block
 ```
 
@@ -404,7 +382,7 @@ iriscli --home ibc-b/n0/iriscli q ibc channel proof port-to-a chann-to-a \
 iriscli --home ibc-a/n0/iriscli tx ibcmockbank transfer \
   --src-port port-to-b --src-channel chann-to-b \
   --denom n0token --amount 1 \
-  --receiver $(iriscli --home ibc-a/n0/iriscli keys show n1 | jq -r '.address') \
+  --receiver $(iriscli --home ibc-b/n0/iriscli keys show n0 | jq -r '.address') \
   --source true \
   --from n0 -y -o json > ibc-a/n0/result.json
 # export packet.json
@@ -426,12 +404,12 @@ iriscli --home ibc-a/n0/iriscli q ibc channel proof port-to-b chann-to-b \
 jq -r '' ibc-b/n0/proof.json
 # update client on chain-b
 iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json \
-  --from n1 -y -o text --broadcast-mode=block
+  --from n0 -y -o text --broadcast-mode=block
 # receive packet
 iriscli --home ibc-b/n0/iriscli tx ibcmockbank recv-packet \
   ibc-b/n0/packet.json ibc-b/n0/proof.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
-  --from n1 -y -o text \
+  --from n0 -y -o text \
   --broadcast-mode=block
 ```
 
@@ -443,5 +421,5 @@ iriscli --home ibc-a/n0/iriscli q account -o text \
   $(iriscli --home ibc-a/n0/iriscli keys show n0 | jq -r '.address')
 # view receiver account
 iriscli --home ibc-b/n0/iriscli q account -o text \
-  $(iriscli --home ibc-a/n0/iriscli keys show n1 | jq -r '.address')
+  $(iriscli --home ibc-b/n0/iriscli keys show n0 | jq -r '.address')
 ```
