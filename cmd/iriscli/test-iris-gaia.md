@@ -15,20 +15,13 @@ iriscli version
 **Install `gaia`**
 
 ```bash
-git clone git@github.com:irisnet/gaia.git
+git clone https://github.com/irisnet/gaia.git
 cd gaia
 git checkout ibc-gaia-mockbank
 go mod tidy
 make install
 gaiad version
 gaiacli version
-```
-
-**Use local `cosmos-sdk` for test**
-
-```bash
-# go.mod
-replace github.com/cosmos/cosmos-sdk => /path-to-your-local/cosmos-sdk
 ```
 
 **Environment setup**
@@ -292,8 +285,8 @@ gaiacli --home ibc-gaia/n0/gaiacli q ibc connection client client-to-iris | jq
 ```bash
 # open-init
 iriscli --home ibc-iris/n0/iriscli tx ibc channel open-init \
-  port-to-gaia chann-to-gaia \
-  port-to-iris chann-to-iris \
+  port-to-bank chann-to-gaia \
+  port-to-bank chann-to-iris \
   conn-to-gaia \
   --from n0 -y -o text \
   --broadcast-mode=block
@@ -305,7 +298,7 @@ iriscli --home ibc-iris/n0/iriscli tx ibc channel open-init \
 # export header.json from chain-iris
 iriscli --home ibc-iris/n0/iriscli q ibc client header -o json >ibc-gaia/n0/header.json
 # export proof_init.json from chain-iris with hight in header.json
-iriscli --home ibc-iris/n0/iriscli q ibc channel proof port-to-gaia chann-to-gaia \
+iriscli --home ibc-iris/n0/iriscli q ibc channel proof port-to-bank chann-to-gaia \
   $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \
   -o json >ibc-gaia/n0/chann_proof_init.json
 # view proof_init.json
@@ -317,8 +310,8 @@ gaiacli --home ibc-gaia/n0/gaiacli tx ibc client update client-to-iris ibc-gaia/
 gaiacli --home ibc-gaia/n0/gaiacli q ibc client consensus-state client-to-iris | jq
 # open-try
 gaiacli --home ibc-gaia/n0/gaiacli tx ibc channel open-try \
-  port-to-iris chann-to-iris \
-  port-to-gaia chann-to-gaia \
+  port-to-bank chann-to-iris \
+  port-to-bank chann-to-gaia \
   conn-to-iris \
   ibc-gaia/n0/chann_proof_init.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \
@@ -332,7 +325,7 @@ gaiacli --home ibc-gaia/n0/gaiacli tx ibc channel open-try \
 # export header.json from chain-gaia
 gaiacli --home ibc-gaia/n0/gaiacli q ibc client header -o json >ibc-iris/n0/header.json
 # export proof_try.json from chain-gaia with hight in header.json
-gaiacli --home ibc-gaia/n0/gaiacli q ibc channel proof port-to-iris chann-to-iris \
+gaiacli --home ibc-gaia/n0/gaiacli q ibc channel proof port-to-bank chann-to-iris \
   $(jq -r '.value.SignedHeader.header.height' ibc-iris/n0/header.json) \
   -o json >ibc-iris/n0/chann_proof_try.json
 # view proof_try.json
@@ -344,7 +337,7 @@ iriscli --home ibc-iris/n0/iriscli tx ibc client update client-to-gaia ibc-iris/
 iriscli --home ibc-iris/n0/iriscli q ibc client consensus-state client-to-gaia | jq
 # open-ack
 iriscli --home ibc-iris/n0/iriscli tx ibc channel open-ack \
-  port-to-gaia chann-to-gaia \
+  port-to-bank chann-to-gaia \
   ibc-iris/n0/chann_proof_try.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-iris/n0/header.json) \
   --from n0 -y -o text \
@@ -357,7 +350,7 @@ iriscli --home ibc-iris/n0/iriscli tx ibc channel open-ack \
 # export header.json from chain-iris
 iriscli --home ibc-iris/n0/iriscli q ibc client header -o json >ibc-gaia/n0/header.json
 # export proof_ack.json from chain-iris with hight in header.json
-iriscli --home ibc-iris/n0/iriscli q ibc channel proof port-to-gaia chann-to-gaia \
+iriscli --home ibc-iris/n0/iriscli q ibc channel proof port-to-bank chann-to-gaia \
   $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \
   -o json >ibc-gaia/n0/chann_proof_ack.json
 # view proof_ack.json
@@ -369,7 +362,7 @@ gaiacli --home ibc-gaia/n0/gaiacli tx ibc client update client-to-iris ibc-gaia/
 gaiacli --home ibc-gaia/n0/gaiacli q ibc client consensus-state client-to-iris | jq
 # open-confirm
 gaiacli --home ibc-gaia/n0/gaiacli tx ibc channel open-confirm \
-  port-to-iris chann-to-iris \
+  port-to-bank chann-to-iris \
   ibc-gaia/n0/chann_proof_ack.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \
   --from n0 -y -o text \
@@ -382,19 +375,19 @@ query channel
 
 ```bash
 # query channel on chain-iris
-iriscli --home ibc-iris/n0/iriscli query ibc channel end port-to-gaia chann-to-gaia | jq
+iriscli --home ibc-iris/n0/iriscli query ibc channel end port-to-bank chann-to-gaia | jq
 # query channel on chain-gaia
-gaiacli --home ibc-gaia/n0/gaiacli query ibc channel end port-to-iris chann-to-iris | jq
+gaiacli --home ibc-gaia/n0/gaiacli query ibc channel end port-to-bank chann-to-iris | jq
 ```
 
 query channel proof
 
 ```bash
 # query channel proof with height in header.json on chain-iris
-iriscli --home ibc-iris/n0/iriscli q ibc channel proof port-to-gaia chann-to-gaia \
+iriscli --home ibc-iris/n0/iriscli q ibc channel proof port-to-bank chann-to-gaia \
   $(jq -r '.value.SignedHeader.header.height' ibc-iris/n0/header.json) | jq
 # query channel proof with height in header.json on chain-gaia
-gaiacli --home ibc-gaia/n0/gaiacli q ibc channel proof port-to-iris chann-to-iris \
+gaiacli --home ibc-gaia/n0/gaiacli q ibc channel proof port-to-bank chann-to-iris \
   $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) | jq
 ```
 
@@ -403,11 +396,18 @@ gaiacli --home ibc-gaia/n0/gaiacli q ibc channel proof port-to-iris chann-to-iri
 ```bash
 # export transfer result to result.json
 iriscli --home ibc-iris/n0/iriscli tx ibcmockbank transfer \
-  --src-port port-to-gaia --src-channel chann-to-gaia \
-  --denom iris-atto --amount 1 \
+  --src-port port-to-bank --src-channel chann-to-gaia \
+  --denom uiris --amount 1 \
   --receiver $(gaiacli --home ibc-gaia/n0/gaiacli keys show n0 | jq -r '.address') \
   --source true \
   --from n0 -y -o json > ibc-iris/n0/result.json
+
+iriscli --home ibc-iris/n0/iriscli tx ibcmockbank transfer \
+  --src-port port-to-bank --src-channel chann-to-gaia \
+  --denom uiris --amount 1 \
+  --receiver $(gaiacli --home ibc-gaia/n0/gaiacli keys show n0 | jq -r '.address') \
+  --source true \
+  --from n0 -y --broadcast-mode=block
 # export packet.json
 jq -r '.events[1].attributes[2].value' ibc-iris/n0/result.json >ibc-gaia/n0/packet.json
 ```
@@ -420,7 +420,7 @@ jq -r '.events[1].attributes[2].value' ibc-iris/n0/result.json >ibc-gaia/n0/pack
 # export header.json from chain-iris
 iriscli --home ibc-iris/n0/iriscli q ibc client header -o json >ibc-gaia/n0/header.json
 # export proof.json from chain-gaia with hight in header.json
-iriscli --home ibc-iris/n0/iriscli q ibc channel proof port-to-gaia chann-to-gaia \
+iriscli --home ibc-iris/n0/iriscli q ibc channel proof port-to-bank chann-to-gaia \
   $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \
   -o json >ibc-gaia/n0/proof.json
 # view proof.json
