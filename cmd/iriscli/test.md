@@ -401,15 +401,14 @@ iriscli --home ibc-b/n0/iriscli q ibc channel proof port-to-a chann-to-a \
 
 ```bash
 # export transfer result to result.json
-iriscli tx ibcmockbank transfer \
+iriscli --home ibc-a/n0/iriscli tx ibcmockbank transfer \
   --src-port port-to-b --src-channel chann-to-b \
   --denom n0token --amount 1 \
   --receiver $(iriscli --home ibc-a/n0/iriscli keys show n1 | jq -r '.address') \
   --source true \
-  --from n0 --home ibc-a/n0/iriscli -y -o json > ibc-b/n0/result.json
-
+  --from n0 -y -o json > ibc-a/n0/result.json
 # export packet.json
-jq -r '.events[1].attributes[2].value' ibc-b/n0/result.json >ibc-b/n0/packet.json
+jq -r '.events[1].attributes[2].value' ibc-a/n0/result.json >ibc-b/n0/packet.json
 ```
 
 **Bank receive**
@@ -419,19 +418,18 @@ jq -r '.events[1].attributes[2].value' ibc-b/n0/result.json >ibc-b/n0/packet.jso
 ```bash
 # export header.json from chain-a
 iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
-# export proof_try.json from chain-b with hight in header.json
-iriscli --home ibc-b/n0/iriscli q ibc channel proof port-to-a chann-to-a $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) -o json >ibc-a/n0/proof.json
-# view proof_try.json
-jq -r '' ibc-a/n0/chann_proof_try.json
+# export proof.json from chain-b with hight in header.json
+iriscli --home ibc-a/n0/iriscli q ibc channel proof port-to-b chann-to-b \
+  $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
+  -o json >ibc-b/n0/proof.json
+# view proof.json
+jq -r '' ibc-b/n0/proof.json
 # update client on chain-b
-iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json --from n1 -y -o text --broadcast-mode=block
-```
-
-**Receive packet `(not implemented)`**
-
-```bash
+iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header.json \
+  --from n1 -y -o text --broadcast-mode=block
+# receive packet
 iriscli --home ibc-b/n0/iriscli tx ibcmockbank recv-packet \
-  ibc-b/n0/packet.json ibc-a/n0/proof.json \
+  ibc-b/n0/packet.json ibc-b/n0/proof.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
   --from n1 -y -o text \
   --broadcast-mode=block
@@ -440,6 +438,10 @@ iriscli --home ibc-b/n0/iriscli tx ibcmockbank recv-packet \
 **Query Account**
 
 ```bash
-iriscli --home ibc-a/n0/iriscli q account -o text $(iriscli --home ibc-a/n0/iriscli keys show n0 | jq -r '.address')
-iriscli --home ibc-b/n0/iriscli q account -o text $(iriscli --home ibc-a/n0/iriscli keys show n1 | jq -r '.address')
+# view sender account
+iriscli --home ibc-a/n0/iriscli q account -o text \
+  $(iriscli --home ibc-a/n0/iriscli keys show n0 | jq -r '.address')
+# view receiver account
+iriscli --home ibc-b/n0/iriscli q account -o text \
+  $(iriscli --home ibc-a/n0/iriscli keys show n1 | jq -r '.address')
 ```
