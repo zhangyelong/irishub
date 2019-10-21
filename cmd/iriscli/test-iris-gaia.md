@@ -1,5 +1,29 @@
 # IBC Test
 
+**Install `iris`**
+
+```bash
+git clone https://github.com/irisnet/irishub.git
+cd irishub
+git checkout cosmos-sdk
+go mod tidy
+make install
+iris version
+iriscli version
+```
+
+**Install `gaia`**
+
+```bash
+git clone git@github.com:irisnet/gaia.git
+cd gaia
+git checkout ibc-gaia-mockbank
+go mod tidy
+make install
+gaiad version
+gaiacli version
+```
+
 **Use local `cosmos-sdk` for test**
 
 ```bash
