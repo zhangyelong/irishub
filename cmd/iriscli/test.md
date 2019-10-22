@@ -25,6 +25,9 @@ sed -i '' 's#"tcp://0.0.0.0:26657"#"tcp://0.0.0.0:26557"#g' ibc-b/n0/iris/config
 sed -i '' 's#"localhost:6060"#"localhost:6061"#g' ibc-b/n0/iris/config/config.toml
 sed -i '' 's#"tcp://127.0.0.1:26658"#"tcp://127.0.0.1:26558"#g' ibc-b/n0/iris/config/config.toml
 
+sed -i '' 's/n0token/atoken/' ibc-a/n0/iris/config/genesis.json
+sed -i '' 's/n0token/btoken/' ibc-b/n0/iris/config/genesis.json
+
 iriscli config --home ibc-a/n0/iriscli/ chain-id chain-a
 iriscli config --home ibc-b/n0/iriscli/ chain-id chain-b
 iriscli config --home ibc-a/n0/iriscli/ output json
@@ -381,7 +384,7 @@ iriscli --home ibc-b/n0/iriscli q ibc channel proof bank chann-to-a \
 # export transfer result to result.json
 iriscli --home ibc-a/n0/iriscli tx ibcmockbank transfer \
   --src-port bank --src-channel chann-to-b \
-  --denom uiris --amount 1 \
+  --denom atoken --amount 1 \
   --receiver $(iriscli --home ibc-b/n0/iriscli keys show n0 | jq -r '.address') \
   --source true \
   --from n0 -y -o json > ibc-a/n0/result.json

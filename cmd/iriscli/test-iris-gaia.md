@@ -42,6 +42,9 @@ sed -i '' 's#"tcp://0.0.0.0:26657"#"tcp://0.0.0.0:26557"#g' ibc-gaia/n0/gaiad/co
 sed -i '' 's#"localhost:6060"#"localhost:6061"#g' ibc-gaia/n0/gaiad/config/config.toml
 sed -i '' 's#"tcp://127.0.0.1:26658"#"tcp://127.0.0.1:26558"#g' ibc-gaia/n0/gaiad/config/config.toml
 
+sed -i '' 's/n0token/uiris/' ibc-iris/n0/iris/config/genesis.json
+sed -i '' 's/n0token/uatom/' ibc-gaia/n0/gaiad/config/genesis.json
+
 iriscli config --home ibc-iris/n0/iriscli/ chain-id chain-iris
 gaiacli config --home ibc-gaia/n0/gaiacli/ chain-id chain-gaia
 iriscli config --home ibc-iris/n0/iriscli/ output json
