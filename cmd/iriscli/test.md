@@ -269,8 +269,8 @@ iriscli --home ibc-b/n0/iriscli q ibc connection client client-to-a | jq
 ```bash
 # open-init
 iriscli --home ibc-a/n0/iriscli tx ibc channel open-init \
-  port-to-bank chann-to-b \
-  port-to-bank chann-to-a \
+  bank chann-to-b \
+  bank chann-to-a \
   conn-to-b \
   --from n0 -y -o text \
   --broadcast-mode=block
@@ -282,7 +282,7 @@ iriscli --home ibc-a/n0/iriscli tx ibc channel open-init \
 # export header.json from chain-a
 iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
 # export proof_init.json from chain-a with hight in header.json
-iriscli --home ibc-a/n0/iriscli q ibc channel proof port-to-bank chann-to-b \
+iriscli --home ibc-a/n0/iriscli q ibc channel proof bank chann-to-b \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
   -o json >ibc-b/n0/chann_proof_init.json
 # view proof_init.json
@@ -294,8 +294,8 @@ iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header
 iriscli --home ibc-b/n0/iriscli q ibc client consensus-state client-to-a | jq
 # open-try
 iriscli --home ibc-b/n0/iriscli tx ibc channel open-try \
-  port-to-bank chann-to-a \
-  port-to-bank chann-to-b \
+  bank chann-to-a \
+  bank chann-to-b \
   conn-to-a \
   ibc-b/n0/chann_proof_init.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
@@ -309,7 +309,7 @@ iriscli --home ibc-b/n0/iriscli tx ibc channel open-try \
 # export header.json from chain-b
 iriscli --home ibc-b/n0/iriscli q ibc client header -o json >ibc-a/n0/header.json
 # export proof_try.json from chain-b with hight in header.json
-iriscli --home ibc-b/n0/iriscli q ibc channel proof port-to-bank chann-to-a \
+iriscli --home ibc-b/n0/iriscli q ibc channel proof bank chann-to-a \
   $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) \
   -o json >ibc-a/n0/chann_proof_try.json
 # view proof_try.json
@@ -321,7 +321,7 @@ iriscli --home ibc-a/n0/iriscli tx ibc client update client-to-b ibc-a/n0/header
 iriscli --home ibc-a/n0/iriscli q ibc client consensus-state client-to-b | jq
 # open-ack
 iriscli --home ibc-a/n0/iriscli tx ibc channel open-ack \
-  port-to-bank chann-to-b \
+  bank chann-to-b \
   ibc-a/n0/chann_proof_try.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) \
   --from n0 -y -o text \
@@ -334,7 +334,7 @@ iriscli --home ibc-a/n0/iriscli tx ibc channel open-ack \
 # export header.json from chain-a
 iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
 # export proof_ack.json from chain-a with hight in header.json
-iriscli --home ibc-a/n0/iriscli q ibc channel proof port-to-bank chann-to-b \
+iriscli --home ibc-a/n0/iriscli q ibc channel proof bank chann-to-b \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
   -o json >ibc-b/n0/chann_proof_ack.json
 # view proof_ack.json
@@ -346,7 +346,7 @@ iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header
 iriscli --home ibc-b/n0/iriscli q ibc client consensus-state client-to-a | jq
 # open-confirm
 iriscli --home ibc-b/n0/iriscli tx ibc channel open-confirm \
-  port-to-bank chann-to-a \
+  bank chann-to-a \
   ibc-b/n0/chann_proof_ack.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
   --from n0 -y -o text \
@@ -359,19 +359,19 @@ query channel
 
 ```bash
 # query channel on chain-a
-iriscli --home ibc-a/n0/iriscli query ibc channel end port-to-bank chann-to-b | jq
+iriscli --home ibc-a/n0/iriscli query ibc channel end bank chann-to-b | jq
 # query channel on chain-b
-iriscli --home ibc-b/n0/iriscli query ibc channel end port-to-bank chann-to-a | jq
+iriscli --home ibc-b/n0/iriscli query ibc channel end bank chann-to-a | jq
 ```
 
 query channel proof
 
 ```bash
 # query channel proof with height in header.json on chain-a
-iriscli --home ibc-a/n0/iriscli q ibc channel proof port-to-bank chann-to-b \
+iriscli --home ibc-a/n0/iriscli q ibc channel proof bank chann-to-b \
   $(jq -r '.value.SignedHeader.header.height' ibc-a/n0/header.json) | jq
 # query channel proof with height in header.json on chain-b
-iriscli --home ibc-b/n0/iriscli q ibc channel proof port-to-bank chann-to-a \
+iriscli --home ibc-b/n0/iriscli q ibc channel proof bank chann-to-a \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) | jq
 ```
 
@@ -380,7 +380,7 @@ iriscli --home ibc-b/n0/iriscli q ibc channel proof port-to-bank chann-to-a \
 ```bash
 # export transfer result to result.json
 iriscli --home ibc-a/n0/iriscli tx ibcmockbank transfer \
-  --src-port port-to-bank --src-channel chann-to-b \
+  --src-port bank --src-channel chann-to-b \
   --denom uiris --amount 1 \
   --receiver $(iriscli --home ibc-b/n0/iriscli keys show n0 | jq -r '.address') \
   --source true \
@@ -397,7 +397,7 @@ jq -r '.events[1].attributes[2].value' ibc-a/n0/result.json >ibc-b/n0/packet.jso
 # export header.json from chain-a
 iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
 # export proof.json from chain-b with hight in header.json
-iriscli --home ibc-a/n0/iriscli q ibc channel proof port-to-bank chann-to-b \
+iriscli --home ibc-a/n0/iriscli q ibc channel proof bank chann-to-b \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
   -o json >ibc-b/n0/proof.json
 # view proof.json
