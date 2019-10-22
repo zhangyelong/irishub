@@ -287,7 +287,7 @@ gaiacli --home ibc-gaia/n0/gaiacli q ibc connection client client-to-iris | jq
 iriscli --home ibc-iris/n0/iriscli tx ibc channel open-init \
   bank chann-to-gaia \
   bank chann-to-iris \
-  conn-to-gaia  --unordered\
+  conn-to-gaia --unordered \
   --from n0 -y -o text \
   --broadcast-mode=block
 ```
@@ -312,7 +312,7 @@ gaiacli --home ibc-gaia/n0/gaiacli q ibc client consensus-state client-to-iris |
 gaiacli --home ibc-gaia/n0/gaiacli tx ibc channel open-try \
   bank chann-to-iris \
   bank chann-to-gaia \
-  conn-to-iris --unordered\
+  conn-to-iris --unordered \
   ibc-gaia/n0/chann_proof_init.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \
   --from n0 -y -o text \

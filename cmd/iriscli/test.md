@@ -271,7 +271,7 @@ iriscli --home ibc-b/n0/iriscli q ibc connection client client-to-a | jq
 iriscli --home ibc-a/n0/iriscli tx ibc channel open-init \
   bank chann-to-b \
   bank chann-to-a \
-  conn-to-b  --unordered\
+  conn-to-b --unordered \
   --from n0 -y -o text \
   --broadcast-mode=block
 ```
@@ -296,7 +296,7 @@ iriscli --home ibc-b/n0/iriscli q ibc client consensus-state client-to-a | jq
 iriscli --home ibc-b/n0/iriscli tx ibc channel open-try \
   bank chann-to-a \
   bank chann-to-b \
-  conn-to-a --unordered\
+  conn-to-a --unordered \
   ibc-b/n0/chann_proof_init.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
   --from n0 -y -o text \
