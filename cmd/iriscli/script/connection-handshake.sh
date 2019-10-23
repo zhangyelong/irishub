@@ -9,7 +9,7 @@ echo "\n*** create client on chain-gaia\n"
 echo 12345678 | gaiacli --home ibc-gaia/n0/gaiacli tx ibc client create client-to-iris ibc-gaia/n0/consensus_state.json --from n0 -y --broadcast-mode=block
 
 echo "\n*** open-init\n"
-echo 12345678 | iriscli --home ibc-iris/n0/iriscli tx ibc connection open-init conn-to-gaia client-to-gaia conn-to-iris client-to-iris ibc-iris/n0/prefix.json --from n0 -y --broadcast-mode=block
+echo 12345678 | iriscli --home ibc-iris/n0/iriscli tx ibc connection open-init conn-to-gaia client-to-gaia conn-to-iris client-to-iris --from n0 -y --broadcast-mode=block
 
 echo "\n*** export header.json from chain-iris\n"
 sleep 8 && iriscli --home ibc-iris/n0/iriscli q ibc client header -o json >ibc-gaia/n0/header.json
@@ -18,7 +18,7 @@ iriscli --home ibc-iris/n0/iriscli q ibc connection proof conn-to-gaia $(jq -r '
 echo "\n*** update client on chain-gaia\n"
 echo 12345678 | gaiacli --home ibc-gaia/n0/gaiacli tx ibc client update client-to-iris ibc-gaia/n0/header.json --from n0 -y --broadcast-mode=block
 echo "\n*** open-try\n"
-echo 12345678 | gaiacli --home ibc-gaia/n0/gaiacli tx ibc connection open-try conn-to-iris client-to-iris conn-to-gaia client-to-gaia ibc-gaia/n0/prefix.json 1.0.0 ibc-gaia/n0/conn_proof_init.json $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) --from n0 -y --broadcast-mode=block
+echo 12345678 | gaiacli --home ibc-gaia/n0/gaiacli tx ibc connection open-try conn-to-iris client-to-iris conn-to-gaia client-to-gaia 1.0.0 ibc-gaia/n0/conn_proof_init.json $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) --from n0 -y --broadcast-mode=block
 
 echo "\n*** export header.json from chain-gaia\n"
 sleep 8 && gaiacli --home ibc-gaia/n0/gaiacli q ibc client header -o json >ibc-iris/n0/header.json

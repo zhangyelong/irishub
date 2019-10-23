@@ -142,8 +142,6 @@ iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header
 `open-init` on chain-a
 
 ```bash
-# view prefix.json
-jq -r '' ibc-a/n0/prefix.json
 # open-init
 iriscli --home ibc-a/n0/iriscli tx ibc connection open-init \
   conn-to-b client-to-b \
