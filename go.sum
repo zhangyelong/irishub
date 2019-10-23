@@ -157,6 +157,8 @@ github.com/irisnet/cosmos-sdk v0.23.2-0.20191023030836-db832c6884bb h1:fWkTCu32G
 github.com/irisnet/cosmos-sdk v0.23.2-0.20191023030836-db832c6884bb/go.mod h1:DATGOvgReTZJ+NJRi+Z4Pi6DxuabkOU51MZhyP4qtY0=
 github.com/irisnet/cosmos-sdk v0.23.2-0.20191023112423-b7233f2e5bcc h1:r3nI8+xpamKxJSz1+a8c3iuZ8QAq0tdZ39Wa2mphc9U=
 github.com/irisnet/cosmos-sdk v0.23.2-0.20191023112423-b7233f2e5bcc/go.mod h1:DATGOvgReTZJ+NJRi+Z4Pi6DxuabkOU51MZhyP4qtY0=
+github.com/irisnet/cosmos-sdk v0.23.2-0.20191023174659-b5e51588e6fd h1:5C9bWJKDWjAyUKhAMGqveVwAhayuB8YqLF60S2BeToU=
+github.com/irisnet/cosmos-sdk v0.23.2-0.20191023174659-b5e51588e6fd/go.mod h1:DATGOvgReTZJ+NJRi+Z4Pi6DxuabkOU51MZhyP4qtY0=
 github.com/jessevdk/go-flags v0.0.0-20141203071132-1679536dcc89/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/jmhodges/levigo v1.0.0 h1:q5EC36kV79HWeTBWsod3mG11EgStG3qArTKcvlksN1U=
 github.com/jmhodges/levigo v1.0.0/go.mod h1:Q6Qx+uH3RAqyK4rFQroq9RL7mdkABMcfhEI+nNuzMJQ=

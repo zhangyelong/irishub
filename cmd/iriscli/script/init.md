@@ -21,22 +21,14 @@ iriscli config --home ibc-iris/n0/iriscli/ output json
 gaiacli config --home ibc-gaia/n0/gaiacli/ output json
 iriscli config --home ibc-iris/n0/iriscli/ node http://localhost:26657
 gaiacli config --home ibc-gaia/n0/gaiacli/ node http://localhost:26557
-
-chmod 777 connection-handshake.sh
-chmod 777 channel-handshake.sh
 ```
 
 ```bash
-# run in background
 nohup iris --home ibc-iris/n0/iris start >ibc-iris.log &
 nohup gaiad --home ibc-gaia/n0/gaiad start >ibc-gaia.log &
-
-# run in terminal
-iris --home ibc-iris/n0/iris start
-gaiad --home ibc-gaia/n0/gaiad start
 ```
 
 ```bash
-./connection-handshake.sh
-./channel-handshake.sh
+chmod 777 handshake.sh
+./handshake.sh
 ```
