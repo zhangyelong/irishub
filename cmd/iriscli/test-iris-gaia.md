@@ -158,15 +158,10 @@ gaiacli --home ibc-gaia/n0/gaiacli tx ibc client update client-to-iris ibc-gaia/
 `open-init` on chain-iris
 
 ```bash
-# export prefix.json
-gaiacli --home ibc-gaia/n0/gaiacli q ibc client path -o json >ibc-iris/n0/prefix.json
-# view prefix.json
-jq -r '' ibc-iris/n0/prefix.json
 # open-init
 iriscli --home ibc-iris/n0/iriscli tx ibc connection open-init \
   conn-to-gaia client-to-gaia \
   conn-to-iris client-to-iris \
-  ibc-iris/n0/prefix.json \
   --from n0 -y -o text \
   --broadcast-mode=block
 ```
@@ -174,8 +169,6 @@ iriscli --home ibc-iris/n0/iriscli tx ibc connection open-init \
 `open-try` on chain-gaia
 
 ```bash
-# export prefix.json
-iriscli --home ibc-iris/n0/iriscli q ibc client path -o json >ibc-gaia/n0/prefix.json
 # export header.json from chain-iris
 iriscli --home ibc-iris/n0/iriscli q ibc client header -o json >ibc-gaia/n0/header.json
 # export proof_init.json from chain-iris with hight in header.json
@@ -193,7 +186,6 @@ gaiacli --home ibc-gaia/n0/gaiacli q ibc client consensus-state client-to-iris |
 gaiacli --home ibc-gaia/n0/gaiacli tx ibc connection open-try \
   conn-to-iris client-to-iris \
   conn-to-gaia client-to-gaia \
-  ibc-gaia/n0/prefix.json \
   1.0.0 \
   ibc-gaia/n0/conn_proof_init.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \

@@ -142,15 +142,12 @@ iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header
 `open-init` on chain-a
 
 ```bash
-# export prefix.json
-iriscli --home ibc-b/n0/iriscli q ibc client path -o json >ibc-a/n0/prefix.json
 # view prefix.json
 jq -r '' ibc-a/n0/prefix.json
 # open-init
 iriscli --home ibc-a/n0/iriscli tx ibc connection open-init \
   conn-to-b client-to-b \
   conn-to-a client-to-a \
-  ibc-a/n0/prefix.json \
   --from n0 -y -o text \
   --broadcast-mode=block
 ```
@@ -158,8 +155,6 @@ iriscli --home ibc-a/n0/iriscli tx ibc connection open-init \
 `open-try` on chain-b
 
 ```bash
-# export prefix.json
-iriscli --home ibc-a/n0/iriscli q ibc client path -o json >ibc-b/n0/prefix.json
 # export header.json from chain-a
 iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
 # export proof_init.json from chain-a with hight in header.json
@@ -177,7 +172,6 @@ iriscli --home ibc-b/n0/iriscli q ibc client consensus-state client-to-a | jq
 iriscli --home ibc-b/n0/iriscli tx ibc connection open-try \
   conn-to-a client-to-a \
   conn-to-b client-to-b \
-  ibc-b/n0/prefix.json \
   1.0.0 \
   ibc-b/n0/conn_proof_init.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
