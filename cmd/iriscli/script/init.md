@@ -24,11 +24,21 @@ gaiacli config --home ibc-gaia/n0/gaiacli/ node http://localhost:26557
 ```
 
 ```bash
-nohup iris --home ibc-iris/n0/iris start >ibc-iris.log &
-nohup gaiad --home ibc-gaia/n0/gaiad start >ibc-gaia.log &
+nohup iris --home ~/ibc-testnets/ibc-iris/n0/iris start >ibc-iris.log &
+nohup gaiad --home ~/ibc-testnets/ibc-gaia/n0/gaiad start >ibc-gaia.log &
 ```
 
 ```bash
 chmod 777 handshake.sh
 ./handshake.sh
+```
+
+```bash
+chmod 777 transfer-iris.sh
+./transfer-iris.sh
+```
+
+```bash
+chmod 777 transfer-gaia.sh
+./transfer-gaia.sh
 ```

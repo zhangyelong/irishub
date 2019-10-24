@@ -395,9 +395,11 @@ iriscli --home ibc-iris/n0/iriscli tx ibcmockbank transfer \
   --denom uiris --amount 1 \
   --receiver $(gaiacli --home ibc-gaia/n0/gaiacli keys show n0 | jq -r '.address') \
   --source true \
-  --from n0 -y -o json > ibc-iris/n0/result.json
+  --from n0 -y -o json \
+  --broadcast-mode=block \
+  >ibc-iris/n0/result.json
 # export packet.json
-jq -r '.events[1].attributes[2].value' ibc-iris/n0/result.json >ibc-gaia/n0/packet.json
+jq -r '.events[1].attributes[5].value' ibc-iris/n0/result.json >ibc-gaia/n0/packet.json
 ```
 
 **Bank receive**
@@ -406,7 +408,8 @@ jq -r '.events[1].attributes[2].value' ibc-iris/n0/result.json >ibc-gaia/n0/pack
 # export header.json from chain-iris
 iriscli --home ibc-iris/n0/iriscli q ibc client header -o json >ibc-gaia/n0/header.json
 # export proof.json from chain-iris with hight in header.json
-iriscli --home ibc-iris/n0/iriscli q ibc channel proof bank chann-to-gaia \
+iriscli --home ibc-iris/n0/iriscli q ibc channel packet-proof bank chann-to-gaia \
+  $(jq -r '.m_sequence' ibc-gaia/n0/packet.json) \
   $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \
   -o json >ibc-gaia/n0/proof.json
 # view proof.json
@@ -442,9 +445,11 @@ gaiacli --home ibc-gaia/n0/gaiacli tx ibcmockbank transfer \
   --denom uatom --amount 1 \
   --receiver $(iriscli --home ibc-iris/n0/iriscli keys show n0 | jq -r '.address') \
   --source true \
-  --from n0 -y -o json > ibc-gaia/n0/result.json
+  --from n0 -y -o json \
+  --broadcast-mode=block \
+  >ibc-gaia/n0/result.json
 # export packet.json
-jq -r '.events[1].attributes[2].value' ibc-gaia/n0/result.json >ibc-iris/n0/packet.json
+jq -r '.events[1].attributes[5].value' ibc-gaia/n0/result.json >ibc-iris/n0/packet.json
 ```
 
 **Bank receive**
@@ -453,7 +458,8 @@ jq -r '.events[1].attributes[2].value' ibc-gaia/n0/result.json >ibc-iris/n0/pack
 # export header.json from chain-gaia
 gaiacli --home ibc-gaia/n0/gaiacli q ibc client header -o json >ibc-iris/n0/header.json
 # export proof.json from chain-gaia with hight in header.json
-gaiacli --home ibc-gaia/n0/gaiacli q ibc channel proof bank chann-to-iris \
+gaiacli --home ibc-gaia/n0/gaiacli q ibc channel packet-proof bank chann-to-iris \
+  $(jq -r '.m_sequence' ibc-iris/n0/packet.json) \
   $(jq -r '.value.SignedHeader.header.height' ibc-iris/n0/header.json) \
   -o json >ibc-iris/n0/proof.json
 # view proof.json
@@ -465,7 +471,7 @@ iriscli --home ibc-iris/n0/iriscli tx ibc client update client-to-gaia ibc-iris/
 iriscli --home ibc-iris/n0/iriscli tx ibcmockbank recv-packet \
   ibc-iris/n0/packet.json ibc-iris/n0/proof.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-iris/n0/header.json) \
-  --from n0 -y -o text \
+  --from n0 -y \
   --broadcast-mode=block
 ```
 
