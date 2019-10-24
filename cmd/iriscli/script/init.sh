@@ -1,9 +1,7 @@
-# TEST
+rm -rf ibc-iris && rm -rf ibc-gaia
 
-```bash
-cd ~ && mkdir ibc-testnets && cd ibc-testnets
-echo 12345678 | iris testnet -o ibc-iris --v 1 --chain-id chain-iris --node-dir-prefix n
-echo 12345678 | gaiad testnet -o ibc-gaia --v 1 --chain-id chain-gaia --node-dir-prefix n
+echo 12345678 | iris testnet -o ibc-iris --v 1 --chain-id iris --node-dir-prefix n
+echo 12345678 | gaiad testnet -o ibc-gaia --v 1 --chain-id cosmos --node-dir-prefix n
 
 sed -i '' 's/"leveldb"/"goleveldb"/g' ibc-iris/n0/iris/config/config.toml
 sed -i '' 's/"leveldb"/"goleveldb"/g' ibc-gaia/n0/gaiad/config/config.toml
@@ -15,30 +13,12 @@ sed -i '' 's#"tcp://127.0.0.1:26658"#"tcp://127.0.0.1:26558"#g' ibc-gaia/n0/gaia
 sed -i '' 's/n0token/uiris/' ibc-iris/n0/iris/config/genesis.json
 sed -i '' 's/n0token/uatom/' ibc-gaia/n0/gaiad/config/genesis.json
 
-iriscli config --home ibc-iris/n0/iriscli/ chain-id chain-iris
-gaiacli config --home ibc-gaia/n0/gaiacli/ chain-id chain-gaia
+# sed -i '' 's/timeout_commit = "5s"/timeout_commit = "2s"/' ibc-iris/n0/iris/config/config.toml
+# sed -i '' 's/timeout_commit = "5s"/timeout_commit = "2s"/' ibc-gaia/n0/gaiad/config/config.toml
+
+iriscli config --home ibc-iris/n0/iriscli/ chain-id iris
+gaiacli config --home ibc-gaia/n0/gaiacli/ chain-id cosmos
 iriscli config --home ibc-iris/n0/iriscli/ output json
 gaiacli config --home ibc-gaia/n0/gaiacli/ output json
 iriscli config --home ibc-iris/n0/iriscli/ node http://localhost:26657
 gaiacli config --home ibc-gaia/n0/gaiacli/ node http://localhost:26557
-```
-
-```bash
-nohup iris --home ~/ibc-testnets/ibc-iris/n0/iris start >ibc-iris.log &
-nohup gaiad --home ~/ibc-testnets/ibc-gaia/n0/gaiad start >ibc-gaia.log &
-```
-
-```bash
-chmod 777 handshake.sh
-./handshake.sh
-```
-
-```bash
-chmod 777 transfer-iris.sh
-./transfer-iris.sh
-```
-
-```bash
-chmod 777 transfer-gaia.sh
-./transfer-gaia.sh
-```
