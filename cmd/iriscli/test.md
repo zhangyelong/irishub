@@ -381,7 +381,7 @@ iriscli --home ibc-a/n0/iriscli tx ibcmockbank transfer \
   --source true \
   --from n0 -y -o json > ibc-a/n0/result.json
 # export packet.json
-jq -r '.events[1].attributes[2].value' ibc-a/n0/result.json >ibc-b/n0/packet.json
+jq -r '.events[1].attributes[5].value' ibc-a/n0/result.json >ibc-b/n0/packet.json
 ```
 
 **Bank receive**
@@ -392,9 +392,10 @@ jq -r '.events[1].attributes[2].value' ibc-a/n0/result.json >ibc-b/n0/packet.jso
 # export header.json from chain-a
 iriscli --home ibc-a/n0/iriscli q ibc client header -o json >ibc-b/n0/header.json
 # export proof.json from chain-b with hight in header.json
-iriscli --home ibc-a/n0/iriscli q ibc channel proof bank chann-to-b \
+iriscli --home ibc-a/n0/iriscli q ibc commitment proof \
+  channels/ports/bank/channels/chann-to-b/packets/$(jq -r '.m_sequence' ibc-b/n0/packet.json) \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
-  -o json >ibc-b/n0/proof.json
+  -o json >ibc-b/n0/packet_proof.json
 # view proof.json
 jq -r '' ibc-b/n0/proof.json
 # update client on chain-b
@@ -402,7 +403,7 @@ iriscli --home ibc-b/n0/iriscli tx ibc client update client-to-a ibc-b/n0/header
   --from n0 -y -o text --broadcast-mode=block
 # receive packet
 iriscli --home ibc-b/n0/iriscli tx ibcmockbank recv-packet \
-  ibc-b/n0/packet.json ibc-b/n0/proof.json \
+  ibc-b/n0/packet.json ibc-b/n0/packet_proof.json \
   $(jq -r '.value.SignedHeader.header.height' ibc-b/n0/header.json) \
   --from n0 -y -o text \
   --broadcast-mode=block
