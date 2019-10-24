@@ -102,15 +102,6 @@ iriscli --home ibc-a/n0/iriscli q ibc client consensus-state client-to-b | jq
 iriscli --home ibc-b/n0/iriscli q ibc client consensus-state client-to-a | jq
 ```
 
-query client path
-
-```bash
-# query client path of chain-a
-iriscli --home ibc-a/n0/iriscli q ibc client path | jq
-# query client path of chain-b
-iriscli --home ibc-b/n0/iriscli q ibc client path | jq
-```
-
 **Update client**
 
 update chain-a

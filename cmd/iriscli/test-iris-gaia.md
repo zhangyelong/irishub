@@ -118,15 +118,6 @@ iriscli --home ibc-iris/n0/iriscli q ibc client consensus-state client-to-gaia |
 gaiacli --home ibc-gaia/n0/gaiacli q ibc client consensus-state client-to-iris | jq
 ```
 
-query client path
-
-```bash
-# query client path of iris
-iriscli --home ibc-iris/n0/iriscli q ibc client path | jq
-# query client path of cosmos
-gaiacli --home ibc-gaia/n0/gaiacli q ibc client path | jq
-```
-
 **Update client**
 
 update iris
