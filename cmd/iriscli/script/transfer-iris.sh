@@ -16,7 +16,7 @@ iriscli --home ibc-iris/n0/iriscli q ibc channel packet-proof bank chann-to-gaia
     $(jq -r '.m_sequence' ibc-gaia/n0/packet.json) \
     $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \
     -o json >ibc-gaia/n0/proof.json
-echo 12345678 | gaiacli --home ibc-gaia/n0/gaiacli tx ibc client update client-to-iris ibc-gaia/n0/header.json --from n0 -y -o text --broadcast-mode=block
+echo 12345678 | gaiacli --home ibc-gaia/n0/gaiacli tx ibc client update client-to-iris ibc-gaia/n0/header.json --from n0 -y --broadcast-mode=block
 echo 12345678 | gaiacli --home ibc-gaia/n0/gaiacli tx ibcmockbank recv-packet \
     ibc-gaia/n0/packet.json ibc-gaia/n0/proof.json \
     $(jq -r '.value.SignedHeader.header.height' ibc-gaia/n0/header.json) \
