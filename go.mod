@@ -10,7 +10,6 @@ require (
 	github.com/fortytw2/leaktest v1.3.0 // indirect
 	github.com/go-kit/kit v0.6.0
 	github.com/gogo/protobuf v1.1.1
-	github.com/golang/protobuf v1.3.2
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/mux v1.6.2
 	github.com/mattn/go-isatty v0.0.4
@@ -35,6 +34,8 @@ require (
 
 replace (
 	github.com/tendermint/iavl => github.com/irisnet/iavl v0.8.2-0.20190905023710-abef11e7f66b
-	github.com/tendermint/tendermint => github.com/irisnet/tendermint v0.22.3-0.20190905014850-7daf474ce5c0
+	github.com/tendermint/tendermint => github.com/irisnet/tendermint v0.28.1-0.20191030084935-cc25237a944f
 	golang.org/x/crypto => github.com/tendermint/crypto v0.0.0-20180820045704-3764759f34a5
 )
+
+go 1.13

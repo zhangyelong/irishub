@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.15.5
+
+*Oct 30th, 2019*
+
+### Tendermint
+
+Bump Tendermint version to irisnet/tendermint [v0.31.3](https://github.com/irisnet/tendermint/releases/tag/v0.31.3) to fix the consensus security bug.
+
+## 0.15.4
+
+*Oct 14th, 2019*
+
+### Tendermint
+
+Bump Tendermint version to irisnet/tendermint [v0.31.2](https://github.com/irisnet/tendermint/releases/tag/v0.31.2) to fix the p2p panic error.
+
+## 0.15.3
+
+*Oct 2th, 2019*
+
+### Tendermint
+
+Bump Tendermint version to irisnet/tendermint [v0.31.1](https://github.com/irisnet/tendermint/releases/tag/v0.31.1) to fix the p2p panic error.
+
 ## 0.15.2
 
 *Sep 11th, 2019*
